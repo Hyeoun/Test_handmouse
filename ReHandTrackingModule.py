@@ -70,12 +70,16 @@ class handDetector():
     def fingersUp(self):  # 벡터을 통한 손가라 구부림 관계
         fingers = []
         zero_dot = [self.lmList[0][1], self.lmList[0][2]]
+
+        cor_degree = self.sol_degree(zero_dot[0], zero_dot[1], self.lmList[9][1], self.lmList[9][2])
         # Thumb
         try:
             Thumb_1 = [self.lmList[self.tipIds[0]][1], self.lmList[self.tipIds[0]][2]]
             Thumb_2 = [self.lmList[self.tipIds[0] - 1][1], self.lmList[self.tipIds[0] - 1][2]]
-            xy_t1 = [abs(Thumb_1[0] - zero_dot[0]), abs(Thumb_1[1] - zero_dot[1])]
-            xy_t2 =[abs(Thumb_2[0] - zero_dot[0]), abs(Thumb_2[1] - zero_dot[1])]
+            Thumb_f1 = self.retouchHands(cor_degree, zero_dot[0], zero_dot[1], Thumb_1[0], Thumb_1[1])
+            Thumb_f2 = self.retouchHands(cor_degree, zero_dot[0], zero_dot[1], Thumb_2[0], Thumb_2[1])
+            xy_t1 = [abs(Thumb_f1[0] - zero_dot[0]), abs(Thumb_f1[1] - zero_dot[1])]
+            xy_t2 = [abs(Thumb_f2[0] - zero_dot[0]), abs(Thumb_f2[0] - zero_dot[1])]
             if xy_t1[0] > xy_t2[0] and xy_t1[1] > xy_t2[1]:
                 fingers.append(1)
             else:
@@ -113,6 +117,20 @@ class handDetector():
 
         return length, img, [x1, y1, x2, y2, cx, cy]
 
+    def retouchHands(self, co_degree, zx, zy, fx, fy):
+        f_degree = self.sol_degree(zx, zy, fx, fy)
+        R = ((fx - zx)**2 + (fy - zy)**2)**0.5
+        co_x = math.cos(f_degree + co_degree) * R
+        co_y = math.tan(f_degree + co_degree) * co_x
+        return [co_x, co_y]
+
+    def sol_degree(self, zx, zy, fx, fy):
+        try:
+            re = math.atan((fy - zy) / (fx - zx))
+        except:
+            if fy > zy: re = math.pi / 2
+            else: re = (math.pi * 2) * 3 / 4
+        return re
 
 def main():
     pTime = 0
