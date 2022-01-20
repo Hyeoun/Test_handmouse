@@ -74,9 +74,9 @@ class handDetector():
         try:
             Thumb_1 = [self.lmList[self.tipIds[0]][1], self.lmList[self.tipIds[0]][2]]
             Thumb_2 = [self.lmList[self.tipIds[0] - 1][1], self.lmList[self.tipIds[0] - 1][2]]
-            vec_t1 = ((Thumb_1[0] - zero_dot[0]) ** 2 + (Thumb_1[1] - zero_dot[1]) ** 2) ** 0.5
-            vec_t2 = ((Thumb_2[0] - zero_dot[0]) ** 2 + (Thumb_2[1] - zero_dot[1]) ** 2) ** 0.5
-            if vec_t1 > vec_t2:
+            xy_t1 = [abs(Thumb_1[0] - zero_dot[0]), abs(Thumb_1[1] - zero_dot[1])]
+            xy_t2 =[abs(Thumb_2[0] - zero_dot[0]), abs(Thumb_2[1] - zero_dot[1])]
+            if xy_t1[0] > xy_t2[0] and xy_t1[1] > xy_t2[1]:
                 fingers.append(1)
             else:
                 fingers.append(0)
