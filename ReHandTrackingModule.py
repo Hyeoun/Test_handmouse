@@ -13,7 +13,7 @@ import numpy as np
 
 
 class handDetector():
-    def __init__(self, mode=False, maxHands=2, modelC = 1, detectionCon=0.5, trackCon=0.5):
+    def __init__(self, mode=False, maxHands=2, modelC = 1, detectionCon=0.8, trackCon=0.8):
         self.mode = mode
         self.maxHands = maxHands
         self.modelC = modelC
@@ -78,9 +78,8 @@ class handDetector():
             Thumb_2 = [self.lmList[self.tipIds[0] - 1][1], self.lmList[self.tipIds[0] - 1][2]]
             Thumb_f1 = self.retouchHands(cor_degree, zero_dot[0], zero_dot[1], Thumb_1[0], Thumb_1[1])
             Thumb_f2 = self.retouchHands(cor_degree, zero_dot[0], zero_dot[1], Thumb_2[0], Thumb_2[1])
-            xy_t1 = [abs(Thumb_f1[0] - zero_dot[0]), abs(Thumb_f1[1] - zero_dot[1])]
-            xy_t2 = [abs(Thumb_f2[0] - zero_dot[0]), abs(Thumb_f2[0] - zero_dot[1])]
-            if xy_t1[0] > xy_t2[0] and xy_t1[1] > xy_t2[1]:
+            print(Thumb_f1[0], Thumb_f2[0])
+            if abs(Thumb_f1[0]) > abs(Thumb_f2[0]) and abs(Thumb_f1[1]) > abs(Thumb_f2[1]):
                 fingers.append(1)
             else:
                 fingers.append(0)
@@ -121,7 +120,7 @@ class handDetector():
         f_degree = self.sol_degree(zx, zy, fx, fy)
         R = ((fx - zx)**2 + (fy - zy)**2)**0.5
         co_x = math.cos(f_degree + co_degree) * R
-        co_y = math.tan(f_degree + co_degree) * co_x
+        co_y = math.sin(f_degree + co_degree) * R
         return [co_x, co_y]
 
     def sol_degree(self, zx, zy, fx, fy):
@@ -130,7 +129,7 @@ class handDetector():
         except:
             if fy > zy: re = math.pi / 2
             else: re = (math.pi * 2) * 3 / 4
-        return re
+        return 90 - re
 
 def main():
     pTime = 0
