@@ -24,6 +24,8 @@ while True:
         # print(bbox1)
         # print(centerPoint1)
         fingers1 = detector.fingersUp(hand1)
+        # length, info, img = detector.findDistance(lmList1[8], lmList1[12], img)  # with draw
+        # length, info = detector.findDistance(lmList1[8], lmList1[12])  # no draw
 
         if len(hands)==2:
             hand2 = hands[1]
@@ -34,6 +36,9 @@ while True:
 
             fingers2 = detector.fingersUp(hand2)
             print(fingers1, fingers2)
+            length, info, img = detector.findDistance(centerPoint1, centerPoint2, img)  # with draw
+
+
 
     cv2.imshow('Image', img)
     cv2.waitKey(1)
