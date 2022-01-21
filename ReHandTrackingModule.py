@@ -71,15 +71,15 @@ class handDetector():
         fingers = []
         zero_dot = [self.lmList[0][1], self.lmList[0][2]]
 
-        cor_degree = self.sol_degree(zero_dot[0], zero_dot[1], self.lmList[9][1], self.lmList[9][2])
+        cor_degree = self.sol_degree(zero_dot[0], zero_dot[1], self.lmList[17][1], self.lmList[17][2])
         # Thumb
         try:
             Thumb_1 = [self.lmList[self.tipIds[0]][1], self.lmList[self.tipIds[0]][2]]
             Thumb_2 = [self.lmList[self.tipIds[0] - 1][1], self.lmList[self.tipIds[0] - 1][2]]
-            Thumb_f1 = self.retouchHands(cor_degree, zero_dot[0], zero_dot[1], Thumb_1[0], Thumb_1[1])
-            Thumb_f2 = self.retouchHands(cor_degree, zero_dot[0], zero_dot[1], Thumb_2[0], Thumb_2[1])
+            Thumb_f1 = self.retouchHands((math.pi/2)-cor_degree, zero_dot[0], zero_dot[1], Thumb_1[0], Thumb_1[1])
+            Thumb_f2 = self.retouchHands((math.pi/2)-cor_degree, zero_dot[0], zero_dot[1], Thumb_2[0], Thumb_2[1])
             print(Thumb_f1[0], Thumb_f2[0])
-            if abs(Thumb_f1[0]) > abs(Thumb_f2[0]) and abs(Thumb_f1[1]) > abs(Thumb_f2[1]):
+            if abs(Thumb_f1[0]) > abs(Thumb_f2[0]):
                 fingers.append(1)
             else:
                 fingers.append(0)
@@ -129,7 +129,7 @@ class handDetector():
         except:
             if fy > zy: re = math.pi / 2
             else: re = (math.pi * 2) * 3 / 4
-        return 90 - re
+        return re
 
 def main():
     pTime = 0
