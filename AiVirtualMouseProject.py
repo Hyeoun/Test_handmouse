@@ -59,12 +59,12 @@ while True:
             # 엄지와 중지 사이의 거리 산출 및 점과 선 그리기
             print(length)
             # 10. Click mouse if distance short
-            if length < 25:
+            if length < 13:
                 cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv2.FILLED)
                 autopy.mouse.click()
 
 
-
+    img = cv2.flip(img, 1)  # 1 : 좌우반전 -1 : 상하반전
     # 11. Frame Rate
     cTime = time.time()
     fps = 1/(cTime-pTime)
