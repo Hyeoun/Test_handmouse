@@ -1,6 +1,6 @@
-from threading import Thread, currentThread
+from threading import Thread
 from CustomHandTrackingModule import HandDetector
-import cv2
+import cv2, cvzone
 import time, math, pyautogui
 
 pTime = 0
@@ -8,9 +8,9 @@ cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
 cap.set(4, 720)
 detector = HandDetector(detectionCon=0.8, maxHands=1)
-eng_word = [['.', ',', '?', '!'], ['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'],
+eng_word = [['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'],
             ['j', 'k', 'l'], ['m', 'n', 'o'], ['p', 'q', 'r', 's'],
-            ['t', 'u', 'v'], ['w', 'x', 'y', 'z'], ['']]
+            ['t', 'u', 'v'], ['w', 'x', 'y', 'z'], ['.', ',', '?', '!'], ['']]
 input_status, thread_flag  = True, True
 temp_arr, past_fingers = [''], []
 input_word = ''
@@ -56,7 +56,7 @@ def choice_word(fingers, word_arr):
 while True:
     success, img = cap.read()
     img = cv2.flip(img, 1)
-    hands, img = detector.findHands(img, flipType=False)
+    hands = detector.findHands(img, flipType=False, draw=False)
 
     if hands:
         lmList = hands[0]['lmList']  # 점의 좌표 수신
@@ -69,7 +69,7 @@ while True:
             if thread_flag:
                 print('thread on')
                 if input_status:
-                    if math.sin((math.pi / 2) - (math.pi / 6)) < (abs(y2 - y1) / distance):
+                    if math.sin(math.pi / 3) < (abs(y2 - y1) / distance):
                         t1 = Thread(target=Input_finger, args=(fingers, 0))
                         thread_flag = False
                         t1.start()
@@ -84,6 +84,12 @@ while True:
             print('word array : {}'.format(temp_arr))
             print('chose word : {}'.format(input_word))
         elif past_fingers != fingers and fingers == [1, 1, 1, 1, 1]: past_fingers = fingers
+
+        temp_print = ''
+        for i in temp_arr:
+            temp_print = temp_print + ' ' + i
+        cvzone.putTextRect(img, temp_print, (640-200, 30), scale=2, thickness=2)
+
 
         # if temp_arr[0] == 'toggle':  # 토글이 된다면 시프트를 누르는 플레그를 참값으로 만든다.
         #     print('use toggle')
