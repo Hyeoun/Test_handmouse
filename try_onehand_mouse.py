@@ -13,11 +13,15 @@ right_status, left_status = True, True
 
 def mouse_Right_click():
     global right_status
-    if right_status: pyautogui.click(button="right")
+    if right_status:
+        pyautogui.click(button="right")
+        time.sleep(0.05)
 
 def mouse_Left_click():
     global left_status
-    if left_status: pyautogui.click(button="left")
+    if left_status:
+        pyautogui.click(button="left")
+        time.sleep(0.05)
 
 def move_mouse(x, y):
     pyautogui.moveRel(x, y)
