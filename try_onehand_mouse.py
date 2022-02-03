@@ -4,8 +4,8 @@ import time, math, pyautogui, autopy
 from threading import Thread
 
 pTime = 0
-mouse_x, mouse_y, pfx, pfy = 0, 0, 0, 0
-mouse_x, move_y = 0, 0
+mouse_x, mouse_y, pfx, pfy = 0, 0, 0, 0 #pfx = previous finger X, pfy = previous finger Y
+move_x, move_y = 0, 0
 cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
 cap.set(4, 720)
@@ -67,7 +67,7 @@ while True:
             drag_flag = False
             t3 = Thread(target=mouse_drag)
             t3.start()
-        elif fingers in [[1, 0, 0, 0, 1], [0, 0, 0, 0, 1]]:
+        elif fingers == [1, 0, 0, 0, 1]:
             tm = Thread(target=move_mouse, args=(move_x, move_y))  # 해당 함수의 스레드 할당
             tm.start()  # 스레드 시작
             drag_flag = True
