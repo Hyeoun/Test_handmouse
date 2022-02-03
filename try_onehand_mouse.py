@@ -37,6 +37,9 @@ def move_scroll():
     elif move_y >= 10:  # 이동된 y좌표가 10 이상일때
         pyautogui.scroll(80)  # 스크롤 업
 
+# def mouse_drag():
+#
+
 while True:
     success, img = cap.read()
     img = cv2.flip(img, 1)  # 좌우반전, -1은 상하반전
@@ -59,10 +62,13 @@ while True:
         elif [fingers[3], fingers[4]] == [0, 0]:  # 마우스 사용시작
             tm = Thread(target=move_mouse, args=(move_x, move_y))  # 해당 함수의 스레드 할당
             tm.start()  # 스레드 시작
-            t1 = Thread(target=mouse_Right_click)
-            t2 = Thread(target=mouse_Left_click)
-            t1.start()
-            t2.start()
+            if [fingers[1], fingers[2]] == [0, 0]:
+                print('drag')
+            else:
+                t1 = Thread(target=mouse_Right_click)
+                t2 = Thread(target=mouse_Left_click)
+                t1.start()
+                t2.start()
             if fingers[0] == 0:
                 t3 = Thread(target=move_scroll)
                 t3.start()
