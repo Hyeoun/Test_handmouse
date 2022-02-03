@@ -11,17 +11,16 @@ cap.set(3, 1280)
 cap.set(4, 720)
 detector = HandDetector(detectionCon=0.8, maxHands=1)  # 손 감지 정확도 0.8, 손 최대 개수 1개만
 right_status, left_status = True, True
-drag_flag, toggle_drag = False, True
+drag_flag, toggle_drag, t1_flag = False, True, True
 
-def mouse_Right_click():
+def mouse_click():
+    global t1_flag
     if right_status:
         pyautogui.click(x=mouse_x, y=mouse_y, button="right")  # 버튼 디폴트는 left다.
-        time.sleep(0.1)  # 추후 조정
-
-def mouse_Left_click():
     if left_status:
         pyautogui.click(x=mouse_x, y=mouse_y)
-        time.sleep(0.1)
+    time.sleep(0.05)
+    t1_flag = True
 
 def move_mouse(x, y):  # 마우스를 얼마큼 움직인다.
     pyautogui.moveRel(x, y)
@@ -39,9 +38,9 @@ def move_scroll():
         pyautogui.scroll(80)  # 스크롤 업
 
 def mouse_drag():
-    global toggle_drag    if drag_flag and toggle_drag:
+    global toggle_drag
+    if drag_flag and toggle_drag:
         pyautogui.mouseDown(x=mouse_x, y=mouse_y)
-
         toggle_drag = False
     elif not drag_flag and not toggle_drag:
         pyautogui.mouseUp(x=mouse_x, y=mouse_y)
@@ -73,19 +72,19 @@ while True:
             tm.start()  # 스레드 시작
             if [fingers[1], fingers[2]] == [0, 0]:
                 drag_flag = True
-                t4 = Thread(target=mouse_drag)
-                t4.start()
+                t3 = Thread(target=mouse_drag)
+                t3.start()
             else:
                 drag_flag = False
-                t4 = Thread(target=mouse_drag)
-                t1 = Thread(target=mouse_Right_click)
-                t2 = Thread(target=mouse_Left_click)
-                t1.start()
-                t2.start()
-                t4.start()
-            if fingers[0] == 0:
-                t3 = Thread(target=move_scroll)
+                t3 = Thread(target=mouse_drag)
+                if t1_flag:
+                    t1 = Thread(target=mouse_click)
+                    t1.start()
+                    t1_flag = False
                 t3.start()
+            if fingers[0] == 0:
+                t2 = Thread(target=move_scroll)
+                t2.start()
 
         pfx, pfy = nfx, nfy  # 전 좌표에 현재좌표 지정
 
