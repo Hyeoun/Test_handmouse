@@ -8,27 +8,25 @@ mouse_x, mouse_y, pfx, pfy = 0, 0, 0, 0
 cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
 cap.set(4, 720)
-detector = HandDetector(detectionCon=0.8, maxHands=1)
+detector = HandDetector(detectionCon=0.8, maxHands=1)  # 손 감지 정확도 0.8, 손 최대 개수 1개만
 right_status, left_status = True, True
 
 def mouse_Right_click():
-    global right_status
     if right_status:
-        pyautogui.click(x=mouse_x, y=mouse_y, button="right")
-        time.sleep(0.05)
+        pyautogui.click(x=mouse_x, y=mouse_y, button="right")  # 버튼 디폴트는 left다.
+        time.sleep(0.08)  # 추후 조정
 
 def mouse_Left_click():
-    global left_status
     if left_status:
         pyautogui.click(x=mouse_x, y=mouse_y)
-        time.sleep(0.05)
+        time.sleep(0.08)
 
 def move_mouse(x, y):  # 마우스를 얼마큼 움직인다.
     pyautogui.moveRel(x, y)
 
-def judge_finger(fx, fy, sx, sy, zx, zy): # 손 끝과 첫번째 마디 비교
-    f_line = ((fx-zx)**2 + (fy-zy)**2)**0.5
-    s_line = ((sx-zx)**2 + (sy-zy)**2)**0.5
+def judge_finger(fx, fy, sx, sy, zx, zy):
+    f_line = ((fx-zx)**2 + (fy-zy)**2)**0.5  # 펴진 손가락 끝과 손목부분 점 간 길이, first_line
+    s_line = ((sx-zx)**2 + (sy-zy)**2)**0.5  # 펴진 손가락 첫번째 마디와 손목부분 점 간 길이, second_line
     if f_line > s_line: return False
     else: return True
 
@@ -37,37 +35,36 @@ while True:
     img = cv2.flip(img, 1)  # 좌우반전, -1은 상하반전
     hands, img = detector.findHands(img, flipType=False)  # 손 찾기 함수, flipType= 반전 여부 확인
 
-    if hands:
+    if hands:  # 손 감지되었을때 시작
         mouse_x, mouse_y = pyautogui.position()  # 마우스 현재 좌표
-        lmList = hands[0]['lmList']  # 손의 좌표를 할당받는다.
+        lmList = hands[0]['lmList']  # 손의 좌표들을 할당받는다.
         fingers = detector.fingersUp(hands[0])  # 각 손가락 접혔는지 확인
-        z_point = [lmList[0][0], lmList[0][1]]  # 손바닥의 점좌표 할당
-        left_status = judge_finger(lmList[8][0], lmList[8][1], lmList[7][0], lmList[7][1], z_point[0], z_point[1])  # 검지 좌표 두개 비교
-        right_status = judge_finger(lmList[12][0], lmList[12][1], lmList[11][0], lmList[11][1], z_point[0], z_point[1])  # 중지 좌표 두개 비교
+        z_point = [lmList[0][0], lmList[0][1]]  # 손목부분의 점좌표 할당
+        left_status = judge_finger(lmList[8][0], lmList[8][1], lmList[7][0], lmList[7][1], z_point[0], z_point[1])  # 검지상태 판단, 좌클릭
+        right_status = judge_finger(lmList[12][0], lmList[12][1], lmList[11][0], lmList[11][1], z_point[0], z_point[1])  # 중지상태 판단, 우클릭
 
-        nfx, nfy = lmList[5]  # 5번점 좌표
+        nfx, nfy = lmList[5]  # 5번점 좌표(검지 가장 안쪽 마디), 마우스 좌표 기준이 될 것임
         if [pfx, pfy] == [0, 0]: pfx, pfy = nfx, nfy  # 최초동작시 오류방지를 위해 최초 좌표 할당
         move_x, move_y = (nfx - pfx), (nfy - pfy)  # 마우스 얼마큼 움직이는지 계산
         print(left_status, right_status)
-        if fingers == [1, 1, 1, 1, 1]:
+        if fingers == [1, 1, 1, 1, 1]:  # 손가락을 모두 폈을때 마우스 동작 x
             print('drop mouse')
         elif [fingers[3], fingers[4]] == [0, 0]:  # 마우스 사용시작
-            tm = Thread(target=move_mouse, args=(move_x, move_y))
-            tm.start()
+            tm = Thread(target=move_mouse, args=(move_x, move_y))  # 해당 함수의 스레드 할당
+            tm.start()  # 스레드 시작
             t1 = Thread(target=mouse_Right_click)
             t2 = Thread(target=mouse_Left_click)
             t1.start()
             t2.start()
 
-        pfx, pfy = nfx, nfy
+        pfx, pfy = nfx, nfy  # 전 좌표에 현재좌표 지정
 
 
     # Frame Rate
-    cTime = time.time()
+    cTime = time.time()  # current time
     fps = 1 / (cTime - pTime)
-    pTime = cTime
-    cv2.putText(img, str(int(fps)), (20, 50), cv2.FONT_HERSHEY_PLAIN, 3,
-                (255, 0, 0), 3)
+    pTime = cTime  # previous time
+    cv2.putText(img, str(int(fps)), (20, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
 
     cv2.imshow('Image', img)
     cv2.waitKey(1)
