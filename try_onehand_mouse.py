@@ -40,10 +40,10 @@ def move_scroll():
 def mouse_drag():
     global toggle_drag
     if drag_flag and toggle_drag:
-        pyautogui.mouseDown(x=mouse_x, y=mouse_y)
+        pyautogui.mouseDown()
         toggle_drag = False
     elif not drag_flag and not toggle_drag:
-        pyautogui.mouseUp(x=mouse_x, y=mouse_y)
+        pyautogui.mouseUp()
         toggle_drag = True
 
 while True:
@@ -60,13 +60,19 @@ while True:
         right_status = judge_finger(lmList[12][0], lmList[12][1], lmList[11][0], lmList[11][1], z_point[0], z_point[1])  # 중지상태 판단, 우클릭
 
         nfx, nfy = lmList[5]  # 5번점 좌표(검지 가장 안쪽 마디), 마우스 좌표 기준이 될 것임
-        if [pfx, pfy] == [0, 0]:
-            pfx, pfy = nfx, nfy  # 최초동작시 오류방지를 위해 최초 좌표 할당
-
+        if [pfx, pfy] == [0, 0]: pfx, pfy = nfx, nfy  # 최초동작시 오류방지를 위해 최초 좌표 할당
         move_x, move_y = (nfx - pfx), (nfy - pfy)  # 마우스 얼마큼 움직이는지 계산
         print(move_x, move_y)
         if fingers == [1, 1, 1, 1, 1]:  # 손가락을 모두 폈을때 마우스 동작 x
-            print('drop mouse')
+            drag_flag = False
+            t3 = Thread(target=mouse_drag)
+            t3.start()
+        elif fingers in [[1, 0, 0, 0, 1], [0, 0, 0, 0, 1]]:
+            tm = Thread(target=move_mouse, args=(move_x, move_y))  # 해당 함수의 스레드 할당
+            tm.start()  # 스레드 시작
+            drag_flag = True
+            t3 = Thread(target=mouse_drag)
+            t3.start()
         elif [fingers[3], fingers[4]] == [0, 0]:  # 마우스 사용시작
             tm = Thread(target=move_mouse, args=(move_x, move_y))  # 해당 함수의 스레드 할당
             tm.start()  # 스레드 시작

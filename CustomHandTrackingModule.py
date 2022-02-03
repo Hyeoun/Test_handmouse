@@ -40,6 +40,7 @@ class HandDetector:
     def findHands(self, img, draw=True, flipType=True):
         """
         Finds hands in a BGR image.
+        :rtype: object
         :param img: Image to find the hands in.
         :param draw: Flag to draw the output on the image.
         :return: Image with or without drawings

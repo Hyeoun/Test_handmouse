@@ -20,6 +20,7 @@ wScr, hScr = autopy.screen.size()  # 화면 해상도 가져오기
 while True:
     # 1. Find hand Landmarks
     success, img = cap.read()
+    img = cv2.flip(img, 1)
     img = detector.findHands(img)
     lmList, bbox = detector.findPosition(img)
 
