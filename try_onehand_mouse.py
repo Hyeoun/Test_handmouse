@@ -13,7 +13,7 @@ detector = HandDetector(detectionCon=0.8, maxHands=1)  # 손 감지 정확도 0.
 right_status, left_status = True, True
 drag_flag, toggle_drag, t1_flag = False, True, True
 
-def mouse_click():
+def mouse_click():  # 클릭 함수
     global t1_flag
     if right_status:
         pyautogui.click(x=mouse_x, y=mouse_y, button="right")  # 버튼 디폴트는 left다.
@@ -70,18 +70,11 @@ while True:
         elif [fingers[3], fingers[4]] == [0, 0]:  # 마우스 사용시작
             tm = Thread(target=move_mouse, args=(move_x, move_y))  # 해당 함수의 스레드 할당
             tm.start()  # 스레드 시작
-            if [fingers[1], fingers[2]] == [0, 0]:
-                drag_flag = True
-                t3 = Thread(target=mouse_drag)
-                t3.start()
-            else:
-                drag_flag = False
-                t3 = Thread(target=mouse_drag)
-                if t1_flag:
-                    t1 = Thread(target=mouse_click)
-                    t1.start()
-                    t1_flag = False
-                t3.start()
+            drag_flag = False
+            if t1_flag:
+                t1 = Thread(target=mouse_click)
+                t1.start()
+                t1_flag = False
             if fingers[0] == 0:
                 t2 = Thread(target=move_scroll)
                 t2.start()
