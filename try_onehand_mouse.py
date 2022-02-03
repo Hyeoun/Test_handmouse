@@ -5,6 +5,7 @@ from threading import Thread
 
 pTime = 0
 mouse_x, mouse_y, pfx, pfy = 0, 0, 0, 0
+move_y = 0
 cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
 cap.set(4, 720)
@@ -30,6 +31,12 @@ def judge_finger(fx, fy, sx, sy, zx, zy):
     if f_line > s_line: return False
     else: return True
 
+def move_scroll():
+    if move_y <= -10: # 이동된 y 좌표가 -10 이하일때
+        pyautogui.scroll(-80)  # 스크롤 다운
+    elif move_y >= 10:  # 이동된 y좌표가 10 이상일때
+        pyautogui.scroll(80)  # 스크롤 업
+
 while True:
     success, img = cap.read()
     img = cv2.flip(img, 1)  # 좌우반전, -1은 상하반전
@@ -46,7 +53,7 @@ while True:
         nfx, nfy = lmList[5]  # 5번점 좌표(검지 가장 안쪽 마디), 마우스 좌표 기준이 될 것임
         if [pfx, pfy] == [0, 0]: pfx, pfy = nfx, nfy  # 최초동작시 오류방지를 위해 최초 좌표 할당
         move_x, move_y = (nfx - pfx), (nfy - pfy)  # 마우스 얼마큼 움직이는지 계산
-        print(left_status, right_status)
+        print(move_x, move_y)
         if fingers == [1, 1, 1, 1, 1]:  # 손가락을 모두 폈을때 마우스 동작 x
             print('drop mouse')
         elif [fingers[3], fingers[4]] == [0, 0]:  # 마우스 사용시작
@@ -56,6 +63,9 @@ while True:
             t2 = Thread(target=mouse_Left_click)
             t1.start()
             t2.start()
+            if fingers[0] == 0:
+                t3 = Thread(target=move_scroll)
+                t3.start()
 
         pfx, pfy = nfx, nfy  # 전 좌표에 현재좌표 지정
 
