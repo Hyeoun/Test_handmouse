@@ -11,7 +11,7 @@ detector = HandDetector(detectionCon=0.8, maxHands=1)
 eng_word = [['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'],
             ['j', 'k', 'l'], ['m', 'n', 'o'], ['p', 'q', 'r', 's'],
             ['t', 'u', 'v'], ['w', 'x', 'y', 'z'], ['.', ',', '?', '!'], ['']]
-input_status, thread_flag  = True, True
+input_status, thread_flag = True, True
 temp_arr, past_fingers = [''], []
 input_word = ''
 

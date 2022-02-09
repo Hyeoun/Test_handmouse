@@ -1,5 +1,6 @@
 import cv2
-from cvzone.HandTrackingModule import HandDetector
+# from cvzone.HandTrackingModule import HandDetector
+from CustomHandTrackingModule import HandDetector
 
 cap = cv2.VideoCapture(0)
 detector = HandDetector(detectionCon=0.8, maxHands=2)

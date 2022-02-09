@@ -49,7 +49,7 @@ def mouse_drag():
 while True:
     success, img = cap.read()
     img = cv2.flip(img, 1)  # 좌우반전, -1은 상하반전
-    hands, img = detector.findHands(img, flipType=False)  # 손 찾기 함수, flipType= 반전 여부 확인
+    hands = detector.findHands(img, flipType=False, draw=False)  # 손 찾기 함수, flipType= 반전 여부 확인
 
     if hands:  # 손 감지되었을때 시작
         mouse_x, mouse_y = pyautogui.position()  # 마우스 현재 좌표
@@ -88,10 +88,10 @@ while True:
 
 
     # Frame Rate
-    cTime = time.time()  # current time
-    fps = 1 / (cTime - pTime) #초당 프레임 수 구함
-    pTime = cTime  # previous time
-    cv2.putText(img, str(int(fps)), (20, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3) #초당 프레임 수 기재
+    # cTime = time.time()  # current time
+    # fps = 1 / (cTime - pTime) #초당 프레임 수 구함
+    # pTime = cTime  # previous time
+    # cv2.putText(img, str(int(fps)), (20, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3) #초당 프레임 수 기재
 
     cv2.imshow('Image', img) #출력 화면
     cv2.waitKey(1)
